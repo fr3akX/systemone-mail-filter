@@ -1,0 +1,28 @@
+[Unit]
+Description=SystemOne after-queue Postfix classification filter
+Wants=network-online.target
+After=network-online.target postfix.service
+
+[Service]
+Type=simple
+DynamicUser=yes
+EnvironmentFile=/etc/systemone-mail-filter/jev.env
+ExecStart=/usr/local/bin/systemone-mail-filter -config /etc/systemone-mail-filter/config.json -env-file=
+Restart=on-failure
+RestartSec=5s
+TimeoutStopSec=75s
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+LockPersonality=yes
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

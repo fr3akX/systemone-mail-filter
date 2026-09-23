@@ -1,0 +1,11 @@
+From: Account Security <security@account-verify.example>
+To: Bob <bob@example.net>
+Reply-To: collect@account-verify.example
+Subject: URGENT: Verify your password immediately
+MIME-Version: 1.0
+Content-Type: text/html; charset=utf-8
+
+<html><body><p>Your bank account will be permanently deleted in one hour.</p>
+<p>Enter your username, password and one-time authentication code at
+<a href="https://credential-collection.example/verify">your bank's secure login</a>.</p>
+<p>Do not contact your bank or tell anyone about this verification.</p></body></html>

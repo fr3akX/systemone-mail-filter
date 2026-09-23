@@ -1,0 +1,46 @@
+# EXAMPLE ONLY: merge with the existing inbound smtp service, retaining its
+# existing options. Do not create a duplicate smtp service definition.
+smtp      inet  n       -       y       -       -       smtpd
+  -o content_filter=systemone:[127.0.0.1]:10025
+  -o receive_override_options=no_address_mappings
+
+# Concurrency should be <= systemone-mail-filter's max_connections (default 8).
+systemone     unix  -       -       n       -       8       smtp
+  -o smtp_send_xforward_command=no
+  -o smtp_tls_security_level=none
+  -o smtp_generic_maps=
+  -o smtp_header_checks=
+  -o smtp_body_checks=
+  -o disable_mime_output_conversion=yes
+  -o smtp_connect_timeout=5s
+  -o smtp_data_done_timeout=120s
+
+# Dedicated reinjection listener: local only, no recursive filtering.
+127.0.0.1:10026 inet n   -       n       -       -       smtpd
+  -o content_filter=
+  -o smtpd_milters=
+  -o receive_override_options=no_unknown_recipient_checks,no_header_body_checks,no_milters
+  -o mynetworks=127.0.0.0/8
+  -o smtpd_authorized_xforward_hosts=
+  -o smtpd_authorized_xclient_hosts=
+  -o smtpd_tls_security_level=none
+  -o smtpd_sasl_auth_enable=no
+  -o smtpd_client_restrictions=permit_mynetworks,reject
+  -o smtpd_helo_restrictions=
+  -o smtpd_sender_restrictions=
+  -o smtpd_relay_restrictions=permit_mynetworks,reject
+  -o smtpd_recipient_restrictions=permit_mynetworks,reject
+  -o smtpd_data_restrictions=
+  -o smtpd_end_of_data_restrictions=
+  -o smtpd_restriction_classes=
+  -o local_recipient_maps=
+  -o relay_recipient_maps=
+  -o smtpd_delay_reject=no
+  -o smtpd_soft_error_limit=1001
+  -o smtpd_hard_error_limit=1000
+  -o smtpd_error_sleep_time=0
+  -o message_size_limit=27262976
+
+# main.cf companion setting (not a master.cf line):
+# systemone_destination_recipient_limit = 1000
+# Review main.cf message_size_limit; the filter default is 26214400 bytes.

@@ -1,0 +1,18 @@
+{
+  "listen": "127.0.0.1:10025",
+  "reinject": "127.0.0.1:10026",
+  "hostname": "systemone-mail-filter.local",
+  "subject_prefix": "[SPAM]",
+  "spam_threshold": 0.95,
+  "on_error": "deliver_unmodified",
+  "api_url": "https://api.typesafe.ai/v1/systemone",
+  "model": "jev-1.13.0",
+  "api_timeout_seconds": 5,
+  "smtp_timeout_seconds": 60,
+  "max_message_bytes": 26214400,
+  "max_state_bytes": 24000,
+  "max_connections": 8,
+  "max_recipients": 1000,
+  "circuit_failures": 5,
+  "circuit_cooldown_seconds": 30
+}

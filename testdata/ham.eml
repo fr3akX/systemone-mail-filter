@@ -1,0 +1,9 @@
+From: Alice <alice@example.org>
+To: Bob <bob@example.net>
+Subject: Lunch tomorrow
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+
+Hi Bob,
+Would you like to meet for lunch tomorrow at noon?
+Alice
