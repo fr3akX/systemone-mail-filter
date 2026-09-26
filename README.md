@@ -164,6 +164,12 @@ quoted-printable, RFC 2047 headers, and common character sets. HTML links are
 extracted without opening them. No URL, image, or attachment is fetched or
 executed.
 
+Selected headers are `Subject`, `From`, `Reply-To`, `List-Id`,
+`List-Unsubscribe`, and `X-Spam-Level`, sent under lowercase keys in
+`state.untrusted_headers`. `X-Spam-Level` is advisory context, not a trusted
+verdict or a direct trigger for subject tagging. Each value is capped at 1024
+bytes and remains subject to the overall state budget.
+
 MIME nesting is bounded to 16 levels and 128 parts; outer headers to 256 KiB.
 Attachment contents, attached messages, images, encrypted content, and OCR are
 not inspected. Both plain and HTML alternatives contribute within one byte

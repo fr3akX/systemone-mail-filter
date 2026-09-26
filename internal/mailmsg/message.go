@@ -131,7 +131,7 @@ func (m *Message) Extract(from string, limit int) (State, error) {
 	if len(m.Header["Subject"]) > 1 {
 		return s, errors.New("multiple Subject fields")
 	}
-	for _, name := range []string{"Subject", "From", "Reply-To", "List-Id", "List-Unsubscribe"} {
+	for _, name := range []string{"Subject", "From", "Reply-To", "List-Id", "List-Unsubscribe", "X-Spam-Level"} {
 		value := decodeHeader(m.Header.Get(name))
 		s.UntrustedHeader[strings.ToLower(name)] = clip(value, 1024)
 		if len(value) > 1024 {

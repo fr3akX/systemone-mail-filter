@@ -93,6 +93,40 @@ func TestExtractHTMLCharsetAndBudget(t *testing.T) {
 	}
 }
 
+func TestExtractSpamLevel(t *testing.T) {
+	for _, tc := range []struct {
+		name, header, want string
+		truncated          bool
+	}{
+		{name: "uppercase", header: "X-SPAM-LEVEL: *****\r\n", want: "*****"},
+		{name: "mixed case", header: "x-SpAm-LeVeL: **\r\n", want: "**"},
+		{name: "empty", header: "X-Spam-Level:\r\n"},
+		{name: "absent"},
+		{name: "bounded", header: "X-Spam-Level: " + strings.Repeat("*", 1100) + "\r\n", want: strings.Repeat("*", 1024), truncated: true},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			raw := []byte("Subject: hello\r\n" + tc.header + "\r\nbody\r\n")
+			m, err := Parse(raw)
+			if err != nil {
+				t.Fatal(err)
+			}
+			s, err := m.Extract("sender@example.org", 24000)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if got, ok := s.UntrustedHeader["x-spam-level"]; !ok || got != tc.want {
+				t.Fatalf("x-spam-level = %q (present: %t), want %q", got, ok, tc.want)
+			}
+			if s.Truncated != tc.truncated {
+				t.Fatalf("truncated = %t, want %t", s.Truncated, tc.truncated)
+			}
+			if got := m.Rewrite("[SPAM]", false, nil); !bytes.Equal(got, raw) {
+				t.Fatal("original message changed")
+			}
+		})
+	}
+}
+
 func TestHamSubjectIsBytePreserved(t *testing.T) {
 	raw := []byte("Subject: =?UTF-8?B?0J/RgNC40LLQtdGC?=\r\n continuation\r\n\r\n.body\r\n")
 	m, err := Parse(raw)

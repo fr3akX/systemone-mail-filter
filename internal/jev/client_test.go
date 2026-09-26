@@ -70,6 +70,9 @@ func TestAPIRequestAndValidation(t *testing.T) {
 				if len(req.Questions) != 7 || req.State.Text != "synthetic mail" || req.Model != "jev-1.13.0" {
 					t.Error("incorrect classification request")
 				}
+				if req.State.UntrustedHeader["x-spam-level"] != "*****" {
+					t.Error("missing X-Spam-Level context")
+				}
 				response := validResponse()
 				tc.mutate(response)
 				json.NewEncoder(w).Encode(response)
@@ -77,7 +80,10 @@ func TestAPIRequestAndValidation(t *testing.T) {
 			defer srv.Close()
 			cfg := config.Default()
 			cfg.APIURL = srv.URL
-			result, err := New(cfg, "test-key").Classify(context.Background(), mailmsg.State{Text: "synthetic mail"})
+			result, err := New(cfg, "test-key").Classify(context.Background(), mailmsg.State{
+				Text:            "synthetic mail",
+				UntrustedHeader: map[string]string{"x-spam-level": "*****"},
+			})
 			if (err != nil) != tc.bad {
 				t.Fatalf("result=%#v err=%v", result, err)
 			}
